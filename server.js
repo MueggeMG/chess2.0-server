@@ -93,3 +93,12 @@ const PORT = process.env.PORT || 3000;
 httpServer.listen(PORT, () => {
   console.log(`Server läuft auf Port ${PORT}`);
 });
+
+// =========================================
+// GAME JOINEN
+// =========================================
+
+socket.on('join-game', ({ roomId, color }) => {
+  socket.join(roomId);
+  console.log(`Spieler ${socket.id} joined room ${roomId} as ${color}`);
+});
