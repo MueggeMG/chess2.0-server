@@ -107,3 +107,15 @@ socket.on('join-game', ({ roomId, color }) => {
   socket.join(roomId);
   console.log(`Spieler ${socket.id} joined room ${roomId} as ${color}`);
 });
+
+socket.on('join-game', ({ roomId, color }) => {
+  socket.join(roomId);
+  console.log(`Spieler ${socket.id} joined room ${roomId} as ${color}`);
+  console.log('Alle Räume:', io.sockets.adapter.rooms);
+});
+
+socket.on('move', ({ roomId, move }) => {
+  console.log(`Zug in Raum ${roomId}:`, move.from, '->', move.to);
+  console.log('Raum Teilnehmer:', io.sockets.adapter.rooms.get(roomId));
+  socket.to(roomId).emit('opponent-move', move);
+});
