@@ -86,6 +86,10 @@ io.on('connection', (socket) => {
   });
 });
 
+socket.on('game-action', ({ roomId, action, data }) => {
+  socket.to(roomId).emit('opponent-action', { action, data });
+});
+
 // =========================================
 // SERVER STARTEN
 // =========================================
