@@ -71,6 +71,7 @@ io.on('connection', (socket) => {
 
   // Zug weitergeben
   socket.on('move', ({ roomId, move }) => {
+    console.log('Zug empfangen:', roomId, move);
     socket.to(roomId).emit('opponent-move', move);
   });
 
