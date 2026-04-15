@@ -42,7 +42,7 @@ io.on('connection', (socket) => {
     console.log('Raum erstellt:', roomId);
   });
 
-  // Raum beitreten
+  // Raum beitreten (Lobby)
   socket.on('join-room', (roomId) => {
     const room = rooms.get(roomId);
 
@@ -60,7 +60,6 @@ io.on('connection', (socket) => {
     socket.join(roomId);
     socket.emit('room-joined', roomId);
 
-    // Beide Spieler sind da — Spiel starten
     io.to(roomId).emit('game-start', {
       white: room.players[0],
       black: room.players[1],
@@ -69,10 +68,23 @@ io.on('connection', (socket) => {
     console.log('Spiel gestartet in Raum:', roomId);
   });
 
+  // Spiel beitreten (game.html)
+  socket.on('join-game', ({ roomId, color }) => {
+    socket.join(roomId);
+    console.log(`Spieler ${socket.id} joined room ${roomId} as ${color}`);
+    console.log('Räume:', io.sockets.adapter.rooms);
+  });
+
   // Zug weitergeben
   socket.on('move', ({ roomId, move }) => {
-    console.log('Zug empfangen:', roomId, move);
+    console.log(`Zug in Raum ${roomId}:`, move.from, '->', move.to);
+    console.log('Raum Teilnehmer:', io.sockets.adapter.rooms.get(roomId));
     socket.to(roomId).emit('opponent-move', move);
+  });
+
+  // Aktionen weitergeben (Aufgeben etc.)
+  socket.on('game-action', ({ roomId, action, data }) => {
+    socket.to(roomId).emit('opponent-action', { action, data });
   });
 
   // Verbindung getrennt
@@ -87,35 +99,10 @@ io.on('connection', (socket) => {
   });
 });
 
-socket.on('game-action', ({ roomId, action, data }) => {
-  socket.to(roomId).emit('opponent-action', { action, data });
-});
-
 // =========================================
 // SERVER STARTEN
 // =========================================
 const PORT = process.env.PORT || 3000;
 httpServer.listen(PORT, () => {
   console.log(`Server läuft auf Port ${PORT}`);
-});
-
-// =========================================
-// GAME JOINEN
-// =========================================
-
-socket.on('join-game', ({ roomId, color }) => {
-  socket.join(roomId);
-  console.log(`Spieler ${socket.id} joined room ${roomId} as ${color}`);
-});
-
-socket.on('join-game', ({ roomId, color }) => {
-  socket.join(roomId);
-  console.log(`Spieler ${socket.id} joined room ${roomId} as ${color}`);
-  console.log('Alle Räume:', io.sockets.adapter.rooms);
-});
-
-socket.on('move', ({ roomId, move }) => {
-  console.log(`Zug in Raum ${roomId}:`, move.from, '->', move.to);
-  console.log('Raum Teilnehmer:', io.sockets.adapter.rooms.get(roomId));
-  socket.to(roomId).emit('opponent-move', move);
 });
