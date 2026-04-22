@@ -71,11 +71,10 @@ io.on('connection', (socket) => {
   // Spiel beitreten (game.html)
   socket.on('join-game', ({ roomId, color }) => {
     socket.join(roomId);
-    console.log(`Spieler ${socket.id} joined room ${roomId} as ${color}`);
-
-    // Spielzustand wiederherstellen falls vorhanden
     const room = rooms.get(roomId);
+    console.log('join-game, room:', room);
     if (room && room.moves && room.moves.length > 0) {
+      console.log('Sende restore-game mit', room.moves.length, 'Zügen');
       socket.emit('restore-game', { moves: room.moves });
     }
   });
