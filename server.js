@@ -72,13 +72,21 @@ io.on('connection', (socket) => {
   socket.on('join-game', ({ roomId, color }) => {
     socket.join(roomId);
     console.log(`Spieler ${socket.id} joined room ${roomId} as ${color}`);
-    console.log('Räume:', io.sockets.adapter.rooms);
+
+    // Spielzustand wiederherstellen falls vorhanden
+    const room = rooms.get(roomId);
+    if (room && room.moves && room.moves.length > 0) {
+      socket.emit('restore-game', { moves: room.moves });
+    }
   });
 
   // Zug weitergeben
   socket.on('move', ({ roomId, move }) => {
-    console.log(`Zug in Raum ${roomId}:`, move.from, '->', move.to);
-    console.log('Raum Teilnehmer:', io.sockets.adapter.rooms.get(roomId));
+    const room = rooms.get(roomId);
+    if (room) {
+      if (!room.moves) room.moves = [];
+      room.moves.push(move);
+    }
     socket.to(roomId).emit('opponent-move', move);
   });
 
