@@ -97,16 +97,16 @@ io.on('connection', (socket) => {
       }
     });
   });
-});
 
-// Undo Anfrage senden
-socket.on('undo-request', ({ roomId }) => {
-  socket.to(roomId).emit('undo-requested');
-});
+  // Undo Anfrage senden
+  socket.on('undo-request', ({ roomId }) => {
+    socket.to(roomId).emit('undo-requested');
+  });
 
-// Undo Antwort senden
-socket.on('undo-response', ({ roomId, accepted }) => {
-  socket.to(roomId).emit('undo-answered', { accepted });
+  // Undo Antwort senden
+  socket.on('undo-response', ({ roomId, accepted }) => {
+    socket.to(roomId).emit('undo-answered', { accepted });
+  });
 });
 
 // =========================================
