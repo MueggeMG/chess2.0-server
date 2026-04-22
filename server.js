@@ -72,6 +72,13 @@ io.on('connection', (socket) => {
   socket.on('join-game', ({ roomId, color }) => {
     socket.join(roomId);
     const room = rooms.get(roomId);
+
+    // Spieler ID updaten
+    if (room) {
+      if (color === 'white') room.players[0] = socket.id;
+      if (color === 'black') room.players[1] = socket.id;
+    }
+
     console.log('join-game, room:', room);
     if (room && room.moves && room.moves.length > 0) {
       console.log('Sende restore-game mit', room.moves.length, 'Zügen');
