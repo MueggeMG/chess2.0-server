@@ -112,8 +112,9 @@ io.on('connection', (socket) => {
     console.log('Spieler getrennt:', socket.id);
     rooms.forEach((room, roomId) => {
       if (room.players.includes(socket.id)) {
-        io.to(roomId).emit('opponent-disconnected');
-        rooms.delete(roomId);
+        // Raum NICHT löschen — Spieler kann zurückkommen
+        io.to(roomId).emit('opponent-disconnected-temp');
+        console.log('Spieler hat Raum verlassen, Raum bleibt:', roomId);
       }
     });
   });
