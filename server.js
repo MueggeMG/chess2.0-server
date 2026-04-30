@@ -72,22 +72,18 @@ io.on('connection', (socket) => {
   socket.on('join-game', ({ roomId, color }) => {
     socket.join(roomId);
 
-    // Raum erstellen falls er nicht existiert
     if (!rooms.has(roomId)) {
       rooms.set(roomId, { players: [], moves: [] });
-      console.log('Raum automatisch erstellt:', roomId);
     }
 
     const room = rooms.get(roomId);
-
-    // Spieler ID updaten
     if (color === 'white') room.players[0] = socket.id;
     if (color === 'black') room.players[1] = socket.id;
 
-    console.log('join-game, room:', room);
+    // Anderen Spieler informieren dass Gegner zurück ist
+    socket.to(roomId).emit('opponent-reconnected');
 
     if (room.moves && room.moves.length > 0) {
-      console.log('Sende restore-game mit', room.moves.length, 'Zügen');
       socket.emit('restore-game', { moves: room.moves });
     }
   });
