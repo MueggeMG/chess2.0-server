@@ -115,6 +115,15 @@ io.on('connection', (socket) => {
     });
   });
 
+  // New Game response
+  socket.on('new-game-response', ({ roomId, accepted }) => {
+    if (accepted) {
+      const room = rooms.get(roomId);
+      if (room) room.moves = [];
+    }
+    socket.to(roomId).emit('new-game-answered', { accepted });
+  });
+
   // Undo Anfrage senden
   socket.on('undo-request', ({ roomId }) => {
     socket.to(roomId).emit('undo-requested');
