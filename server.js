@@ -122,6 +122,10 @@ io.on('connection', (socket) => {
 
   // Neues Game akzeptieren
   socket.on('new-game-response', ({ roomId, accepted }) => {
+    if (accepted) {
+      const room = rooms.get(roomId);
+      if (room) room.moves = [];
+    }
     socket.to(roomId).emit('new-game-answered', { accepted });
   });
 
