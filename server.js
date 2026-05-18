@@ -117,6 +117,7 @@ io.on('connection', (socket) => {
 
   // Neues Game anfragen
   socket.on('new-game-request', ({ roomId }) => {
+    console.log('New game request in room:', roomId);
     socket.to(roomId).emit('new-game-requested');
   });
 
