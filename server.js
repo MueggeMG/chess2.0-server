@@ -115,12 +115,13 @@ io.on('connection', (socket) => {
     });
   });
 
-  // New Game response
+  // Neues Game anfragen
+  socket.on('new-game-request', ({ roomId }) => {
+    socket.to(roomId).emit('new-game-requested');
+  });
+
+  // Neues Game akzeptieren
   socket.on('new-game-response', ({ roomId, accepted }) => {
-    if (accepted) {
-      const room = rooms.get(roomId);
-      if (room) room.moves = [];
-    }
     socket.to(roomId).emit('new-game-answered', { accepted });
   });
 
