@@ -139,6 +139,13 @@ io.on('connection', (socket) => {
 
   // Undo Antwort senden
   socket.on('undo-response', ({ roomId, accepted }) => {
+    if (accepted) {
+      const room = rooms.get(roomId);
+      if (room && room.moves) {
+        const toRemove = Math.min(2, room.moves.length);
+        if (toRemove > 0) room.moves.splice(-toRemove, toRemove);
+      }
+    }
     socket.to(roomId).emit('undo-answered', { accepted });
   });
 });
