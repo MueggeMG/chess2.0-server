@@ -148,6 +148,16 @@ io.on('connection', (socket) => {
     }
     socket.to(roomId).emit('undo-answered', { accepted });
   });
+
+  // Remis Anfrage senden
+  socket.on('draw-request', ({ roomId }) => {
+    socket.to(roomId).emit('draw-requested');
+  });
+
+  // Remis Antwort senden
+  socket.on('draw-response', ({ roomId, accepted }) => {
+    socket.to(roomId).emit('draw-answered', { accepted });
+  });
 });
 
 // =========================================
