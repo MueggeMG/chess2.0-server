@@ -34,9 +34,9 @@ io.on('connection', (socket) => {
   console.log('Spieler verbunden:', socket.id);
 
   // Raum erstellen
-  socket.on('create-room', () => {
+  socket.on('create-room', ({ time, inc } = {}) => {
     const roomId = Math.random().toString(36).substring(2, 8).toUpperCase();
-    rooms.set(roomId, { players: [socket.id], fen: null });
+    rooms.set(roomId, { players: [socket.id], fen: null, time: time ?? 600, inc: inc ?? 0 });
     socket.join(roomId);
     socket.emit('room-created', roomId);
     console.log('Raum erstellt:', roomId);
@@ -63,6 +63,8 @@ io.on('connection', (socket) => {
     io.to(roomId).emit('game-start', {
       white: room.players[0],
       black: room.players[1],
+      time: room.time ?? 600,
+      inc:  room.inc  ?? 0,
     });
 
     console.log('Spiel gestartet in Raum:', roomId);
